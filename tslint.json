@@ -1,0 +1,17 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint-config-standard"
+    ],
+    "jsRules": {},
+    "linterOptions": {
+        "excludes": [
+            "node_modules/*/**.ts"
+        ]
+    },
+    "rules": {
+        // See https://github.com/palantir/tslint/issues/4107
+        "strict-type-predicates": false
+    },
+    "rulesDirectory": []
+}

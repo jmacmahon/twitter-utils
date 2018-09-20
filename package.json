@@ -1,0 +1,21 @@
+{
+  "name": "twitter-following-intersection",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "tslint": "^5.11.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.2.0",
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.0.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joe MacMahon <joe@macmahon.eu>",
+  "license": "AGPL-3.0"
+}
