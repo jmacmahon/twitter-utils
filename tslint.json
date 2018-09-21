@@ -11,7 +11,8 @@
     },
     "rules": {
         // See https://github.com/palantir/tslint/issues/4107
-        "strict-type-predicates": false
+        "strict-type-predicates": false,
+        "trailing-comma": [true, {"multiline": "always", "singleline": "never"}]
     },
     "rulesDirectory": []
 }
