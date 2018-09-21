@@ -6,7 +6,7 @@ describe('command parsing', () => {
   it('should error if it could not find a command', () => {
     const tests = [
       () => CommandParsing.parseCommand(['node', '/path/to/file.js']),
-      () => CommandParsing.parseCommand(['/path/to/file.js']),
+      () => CommandParsing.parseCommand(['/path/to/file.js'])
     ]
 
     tests.forEach(test => expect(test).to.throw(Error, 'no command specified'))
@@ -24,10 +24,10 @@ describe('command parsing', () => {
       ...baseParams,
       command,
       '--foo', 'bar',
-      '--baz', 'quux',
+      '--baz', 'quux'
     ]).params).to.deep.include({
       foo: 'bar',
-      baz: 'quux',
+      baz: 'quux'
     })
     expect(CommandParsing.parseCommand([
       ...baseParams,
@@ -35,12 +35,12 @@ describe('command parsing', () => {
       '--foo', 'bar',
       '--bafu',
       '--baz', 'quux',
-      '--fubar',
+      '--fubar'
     ]).params).to.deep.include({
       foo: 'bar',
       baz: 'quux',
       fubar: true,
-      bafu: true,
+      bafu: true
     })
   })
 })

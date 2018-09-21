@@ -1,5 +1,5 @@
 export type Dict<T> = {
-  [key: string]: T | undefined,
+  [key: string]: T | undefined
 }
 
 export function isDict (thing: unknown): thing is Dict<unknown> {

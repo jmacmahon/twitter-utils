@@ -3,7 +3,7 @@ import { Dict } from './dict'
 export namespace CommandParsing {
   export type Options = {
     command: string,
-    params: Dict<unknown>,
+    params: Dict<unknown>
   }
 
   export function parseCommand (args: string[]): Options {
@@ -21,7 +21,7 @@ function parseParams (params: string[]): Dict<unknown> {
   params.forEach((param, index) => {
     outParams = {
       ...outParams,
-      ...getParamPair(params.slice(index)),
+      ...getParamPair(params.slice(index))
     }
   })
   return outParams

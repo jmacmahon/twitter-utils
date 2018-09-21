@@ -1,5 +1,5 @@
-import { Dict } from './dict';
+import { Dict } from './dict'
 
 export type Module = {
-  run: (params: Dict<unknown>) => Promise<void>,
+  run: (params: Dict<unknown>) => Promise<void>
 }
