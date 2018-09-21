@@ -1,6 +1,5 @@
 import { Dict } from './dict'
 import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
-import { Twitter } from 'twit'
 
 export namespace TwitterClient {
   export interface TwitParams {
@@ -19,7 +18,7 @@ export namespace TwitterClient {
 
   export type User = {
     id: number,
-    name: string
+    screen_name: string
   }
 }
 
@@ -37,6 +36,7 @@ function extractUsers (raw: Dict<unknown>): TwitterClient.User[] {
   const extractor = new JsonExtractor(raw)
   const data = extractor.arrayOfObjects('users', (userExtractor) => ({
     ...userExtractor.numericValue('id'),
+    ...userExtractor.stringValue('screen_name'),
     ...userExtractor.stringValue('name')
   }))
   return data.users

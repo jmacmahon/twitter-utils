@@ -61,5 +61,20 @@ describe('Twitter API client wrapper', () => {
       const test3 = buildTwitterClient({ users: [{}] })
       await expect(test3.getFriends()).to.be.rejectedWith(Error)
     })
+
+    it('should return id, screen_name and name fields', async () => {
+      const data = {
+        users: [
+          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) },
+          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) },
+          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) },
+          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) }
+        ]
+      }
+      const fakeTwit = { get: () => Promise.resolve({ data }) }
+      const client = new TwitterClient(fakeTwit)
+      const actualUsers = await client.getFriends()
+      expect(actualUsers).to.deep.equal(data.users)
+    })
   })
 })
