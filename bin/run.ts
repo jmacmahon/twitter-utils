@@ -6,6 +6,7 @@ import { FollowingIntersection } from '../src/modules/followingIntersection'
 import { CommandParsing } from '../src/commandParsing'
 import { Dict } from '../src/dict'
 import { Module } from '../src/module'
+import { Following } from '../src/modules/following';
 
 config()
 
@@ -25,7 +26,8 @@ async function main () {
   })
   const client = new TwitterClient(twit)
   const modules: Dict<Module> = {
-    'following-intersection': new FollowingIntersection(client)
+    'following-intersection': new FollowingIntersection(client),
+    'following': new Following(client)
   }
 
   const fullCommand = CommandParsing.parseCommand(process.argv)
