@@ -2,12 +2,15 @@ import { TwitterClient } from '../twitterApiClient'
 import { Module } from '../module'
 import { Dict } from '../dict'
 import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
+import { intersectionBy } from 'lodash'
 
 export class FollowingIntersection implements Module {
   constructor (private client: TwitterClient.GetFriends) { }
 
-  public async getIntersection (screenNameA: string, screenNameB: string): Promise<TwitterClient.User[]> {
-    throw new Error('not yet implemented')
+  public async getIntersection (userA: string, userB: string): Promise<TwitterClient.User[]> {
+    const followersA = await this.client.getFriends(userA)
+    const followersB = await this.client.getFriends(userB)
+    return intersectionBy(followersB, followersA, user => user.id)
   }
 
   async run (rawParams: Dict<unknown>) {
