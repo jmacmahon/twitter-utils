@@ -1,13 +1,14 @@
 import { Dict } from './dict'
+import { endsWith } from 'lodash'
 
 export namespace CommandParsing {
-  export type Options = {
+  export type Command = {
     command: string,
     params: Dict<unknown>
   }
 
-  export function parseCommand (args: string[]): Options {
-    const strippedArgs = args[0] === 'node' ? args.slice(2) : args.slice(1)
+  export function parseCommand (args: string[]): Command {
+    const strippedArgs = endsWith(args[0], 'node') ? args.slice(2) : args.slice(1)
     if (strippedArgs.length === 0) {
       throw new Error('no command specified')
     }

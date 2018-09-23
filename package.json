@@ -5,12 +5,16 @@
   "main": "index.js",
   "dependencies": {
     "@evergreen-smart-power/validation-tools": "^1.0.1",
+    "dotenv": "^6.0.0",
+    "lodash": "^4.17.11",
     "tslint": "^5.11.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {
     "@types/chai": "^4.1.5",
     "@types/chai-as-promised": "^7.1.0",
+    "@types/dotenv": "^4.0.3",
+    "@types/lodash": "^4.14.116",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.10.1",
     "@types/random-js": "^1.0.31",
