@@ -5,6 +5,7 @@ import { random } from 'reproducible-random'
 describe('command parsing', () => {
   it('should error if it could not find a command', () => {
     const tests = [
+      () => CommandParsing.parseCommand(['/usr/bin/node', '/path/to/file.js']),
       () => CommandParsing.parseCommand(['node', '/path/to/file.js']),
       () => CommandParsing.parseCommand(['/path/to/file.js'])
     ]
@@ -19,7 +20,7 @@ describe('command parsing', () => {
 
   it('should return the --params as key-value pairs or flags', () => {
     const command = random.string(10)
-    const baseParams = random.pick([['node', '/path/to/file.js'], ['/path/to/file.js']])
+    const baseParams = random.pick([['/usr/bin/node', '/path/to/file.js'], ['/path/to/file.js']])
     expect(CommandParsing.parseCommand([
       ...baseParams,
       command,
