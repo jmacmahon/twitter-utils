@@ -1,7 +1,6 @@
-import { Dict } from './dict'
 import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
-import { isString } from 'util'
 import { concat } from 'lodash'
+import { Dict } from './dict'
 
 export namespace TwitterClient {
   export interface TwitParams {

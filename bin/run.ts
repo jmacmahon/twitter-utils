@@ -1,12 +1,12 @@
+import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
 import { config } from 'dotenv'
 import Twit from 'twit'
-import { TwitterClient } from '../src/twitterApiClient'
-import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
-import { FollowingIntersection } from '../src/modules/followingIntersection'
 import { CommandParsing } from '../src/commandParsing'
 import { Dict } from '../src/dict'
 import { Module } from '../src/module'
 import { Following } from '../src/modules/following'
+import { FollowingDiff } from '../src/modules/followingDiff'
+import { TwitterClient } from '../src/twitterApiClient'
 
 config()
 
@@ -26,7 +26,7 @@ async function main () {
   })
   const client = new TwitterClient(twit)
   const modules: Dict<Module> = {
-    'following-intersection': new FollowingIntersection(client),
+    'following-diff': new FollowingDiff(client),
     'following': new Following(client)
   }
 

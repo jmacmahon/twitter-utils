@@ -1,7 +1,7 @@
-import { TwitterClient } from '../twitterApiClient'
-import { Module } from '../module'
-import { Dict } from '../dict'
 import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
+import { Dict } from '../dict'
+import { Module } from '../module'
+import { TwitterClient } from '../twitterApiClient'
 
 export class Following implements Module {
   constructor (private client: TwitterClient.GetFriends) { }

@@ -1,5 +1,5 @@
-import { Dict } from './dict'
 import { endsWith } from 'lodash'
+import { Dict } from './dict'
 
 export namespace CommandParsing {
   export type Command = {

@@ -1,7 +1,7 @@
-import { TwitterClient } from '../../../src/twitterApiClient'
-import { random } from 'reproducible-random'
-import { FollowingIntersection } from '../../../src/modules/followingIntersection'
 import { expect } from 'chai'
+import { random } from 'reproducible-random'
+import { FollowingDiff } from '../../../src/modules/followingDiff'
+import { TwitterClient } from '../../../src/twitterApiClient'
 
 describe('followingIntersection', () => {
   it('rejects if the Twitter client rejects', () => {
@@ -9,7 +9,7 @@ describe('followingIntersection', () => {
     const fakeTwitterApiClient: TwitterClient.GetFriends = {
       getFriends: () => Promise.reject(err)
     }
-    const followingIntersection = new FollowingIntersection(fakeTwitterApiClient)
+    const followingIntersection = new FollowingDiff(fakeTwitterApiClient)
 
     return expect(followingIntersection.getIntersection(random.string(32), random.string(32))).to.be.rejectedWith(err)
   })
@@ -25,36 +25,45 @@ describe('followingIntersection', () => {
         return Promise.resolve([])
       }
     }
-    const followingIntersection = new FollowingIntersection(fakeTwitterApiClient)
+    const followingIntersection = new FollowingDiff(fakeTwitterApiClient)
 
     await followingIntersection.getIntersection(user1, user2)
     expect(usernames).to.include(user1)
     expect(usernames).to.include(user2)
   })
 
-  it('returns the intersection of the results of calls to getFriends', async () => {
+  it('returns the intersection, left-only and right-only followers', async () => {
     const user1: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user1-${random.string(32)}` }
     const user2: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user2-${random.string(32)}` }
     const user3: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user3-${random.string(32)}` }
     const user4: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user4-${random.string(32)}` }
 
-    let count = 0
+    const userA = random.string(32)
+    const userB = random.string(32)
     const fakeTwitterApiClient: TwitterClient.GetFriends = {
-      getFriends: async () => {
-        count += 1
-        switch (count) {
-          case 1:
+      getFriends: async (username) => {
+        switch (username) {
+          case userA:
             return [user1, user2, user3]
-          case 2:
+          case userB:
             return [user3, user4]
           default:
-            throw new Error('should not be called more than twice')
+            throw new Error('called with a bad username')
         }
       }
     }
-    const followingIntersection = new FollowingIntersection(fakeTwitterApiClient)
+    const followingIntersection = new FollowingDiff(fakeTwitterApiClient)
 
-    const intersection = await followingIntersection.getIntersection(random.string(32), random.string(32))
-    expect(intersection).to.deep.equal([user3])
+    const intersection = await followingIntersection.getIntersection(userA, userB)
+
+    expect(intersection.onlyInA.length).to.equal(2)
+    expect(intersection.onlyInA).to.include(user1)
+    expect(intersection.onlyInA).to.include(user2)
+
+    expect(intersection.inBoth.length).to.equal(1)
+    expect(intersection.inBoth).to.include(user3)
+
+    expect(intersection.onlyInB.length).to.equal(1)
+    expect(intersection.onlyInB).to.include(user4)
   })
 })

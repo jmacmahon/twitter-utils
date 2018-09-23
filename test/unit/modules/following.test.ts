@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import { TwitterClient } from '../../../src/twitterApiClient'
 import { random } from 'reproducible-random'
 import { Following } from '../../../src/modules/following'
+import { TwitterClient } from '../../../src/twitterApiClient'
 
 describe('following', () => {
   it('rejects if the Twitter client rejects', () => {

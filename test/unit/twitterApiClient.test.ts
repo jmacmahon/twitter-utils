@@ -1,8 +1,8 @@
 // tslint:disable await-promise
-import { random } from 'reproducible-random'
 import { expect } from 'chai'
-import { TwitterClient } from '../../src/twitterApiClient'
+import { random } from 'reproducible-random'
 import { Dict } from '../../src/dict'
+import { TwitterClient } from '../../src/twitterApiClient'
 
 const noop = () => undefined
 

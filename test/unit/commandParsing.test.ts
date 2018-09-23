@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import { CommandParsing } from '../../src/commandParsing'
 import { random } from 'reproducible-random'
+import { CommandParsing } from '../../src/commandParsing'
 
 describe('command parsing', () => {
   it('should error if it could not find a command', () => {
