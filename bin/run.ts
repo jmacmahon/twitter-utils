@@ -6,7 +6,7 @@ import { FollowingIntersection } from '../src/modules/followingIntersection'
 import { CommandParsing } from '../src/commandParsing'
 import { Dict } from '../src/dict'
 import { Module } from '../src/module'
-import { Following } from '../src/modules/following';
+import { Following } from '../src/modules/following'
 
 config()
 
