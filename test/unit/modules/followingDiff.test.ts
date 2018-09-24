@@ -57,14 +57,14 @@ describe('followingIntersection', () => {
 
     const intersection = await followingIntersection.getIntersection(userA, userB)
 
-    expect(intersection.onlyInA.length).to.equal(2)
-    expect(intersection.onlyInA).to.include(user1)
-    expect(intersection.onlyInA).to.include(user2)
+    expect(intersection.left.length).to.equal(2)
+    expect(intersection.left).to.include(user1)
+    expect(intersection.left).to.include(user2)
 
-    expect(intersection.inBoth.length).to.equal(1)
-    expect(intersection.inBoth).to.include(user3)
+    expect(intersection.middle.length).to.equal(1)
+    expect(intersection.middle).to.include(user3)
 
-    expect(intersection.onlyInB.length).to.equal(1)
-    expect(intersection.onlyInB).to.include(user4)
+    expect(intersection.right.length).to.equal(1)
+    expect(intersection.right).to.include(user4)
   })
 })

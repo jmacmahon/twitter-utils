@@ -25,9 +25,9 @@ export class FollowingDiff implements Module {
 
 export namespace FollowingDiff {
   export type Diff<T> = {
-    onlyInA: T[],
-    inBoth: T[],
-    onlyInB: T[]
+    left: T[],
+    middle: T[],
+    right: T[]
   }
 
   export function diffBy<T> (listA: T[], listB: T[], hash: (elem: T) => string): Diff<T> {
@@ -54,9 +54,9 @@ export namespace FollowingDiff {
     })
 
     return {
-      onlyInA: dictValues(hashesOfOnlyA),
-      inBoth: dictValues(hashesOfBoth),
-      onlyInB: dictValues(hashesOfOnlyB)
+      left: dictValues(hashesOfOnlyA),
+      middle: dictValues(hashesOfBoth),
+      right: dictValues(hashesOfOnlyB)
     }
   }
 }
