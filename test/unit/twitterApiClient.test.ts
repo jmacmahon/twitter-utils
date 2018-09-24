@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { random } from 'reproducible-random'
 import { Dict } from '../../src/dict'
 import { TwitterClient } from '../../src/twitterApiClient'
+import { randomUser } from './dataGeneration'
 
 const noop = () => undefined
 
@@ -62,13 +63,13 @@ describe('Twitter API client wrapper', () => {
       await expect(test3.getFriends()).to.be.rejectedWith(Error)
     })
 
-    it('should return id, screen_name and name fields', async () => {
+    it('should return id_str, screen_name and name fields', async () => {
       const data = {
         users: [
-          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) },
-          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) },
-          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) },
-          { screen_name: random.string(32), name: random.string(32), id: random.integer(1e6, 1e7 - 1) }
+          randomUser(),
+          randomUser(),
+          randomUser(),
+          randomUser()
         ]
       }
       const fakeTwit = { get: () => Promise.resolve({ data }) }

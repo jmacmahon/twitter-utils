@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { random } from 'reproducible-random'
 import { FollowingDiff } from '../../../src/modules/followingDiff'
 import { TwitterClient } from '../../../src/twitterApiClient'
+import { randomUser } from '../dataGeneration'
 
 describe('followingIntersection', () => {
   it('rejects if the Twitter client rejects', () => {
@@ -33,10 +34,10 @@ describe('followingIntersection', () => {
   })
 
   it('returns the intersection, left-only and right-only followers', async () => {
-    const user1: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user1-${random.string(32)}` }
-    const user2: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user2-${random.string(32)}` }
-    const user3: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user3-${random.string(32)}` }
-    const user4: TwitterClient.User = { id: random.integer(1e6, 1e7 - 1), screen_name: `user4-${random.string(32)}` }
+    const user1: TwitterClient.User = randomUser('user1')
+    const user2: TwitterClient.User = randomUser('user2')
+    const user3: TwitterClient.User = randomUser('user3')
+    const user4: TwitterClient.User = randomUser('user4')
 
     const userA = random.string(32)
     const userB = random.string(32)

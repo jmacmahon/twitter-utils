@@ -20,8 +20,9 @@ export namespace TwitterClient {
   }
 
   export type User = {
-    id: number,
+    id_str: string
     screen_name: string
+    name: string
   }
 }
 
@@ -62,7 +63,7 @@ export class TwitterClient implements TwitterClient.GetFriends {
 function extractUsers (raw: Dict<unknown>): TwitterClient.User[] {
   const extractor = new JsonExtractor(raw)
   const data = extractor.arrayOfObjects('users', (userExtractor) => ({
-    ...userExtractor.numericValue('id'),
+    ...userExtractor.stringValue('id_str'),
     ...userExtractor.stringValue('screen_name'),
     ...userExtractor.stringValue('name')
   }))

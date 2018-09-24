@@ -9,7 +9,7 @@ export class FollowingDiff implements Module {
   public async getIntersection (userA: string, userB: string): Promise<FollowingDiff.Diff<TwitterClient.User>> {
     const followersA = await this.client.getFriends(userA)
     const followersB = await this.client.getFriends(userB)
-    return FollowingDiff.diffBy(followersA, followersB, user => user.id.toString())
+    return FollowingDiff.diffBy(followersA, followersB, user => user.id_str)
   }
 
   async run (rawParams: Dict<unknown>) {

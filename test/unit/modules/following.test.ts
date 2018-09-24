@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { random } from 'reproducible-random'
 import { Following } from '../../../src/modules/following'
 import { TwitterClient } from '../../../src/twitterApiClient'
+import { randomUser } from '../dataGeneration'
 
 describe('following', () => {
   it('rejects if the Twitter client rejects', () => {
@@ -15,7 +16,7 @@ describe('following', () => {
   })
 
   it('wraps .getFriends', async () => {
-    const usersToReturn: TwitterClient.User[] = [{ id: random.integer(1e6, 1e7 - 1), screen_name: random.string(32) }]
+    const usersToReturn: TwitterClient.User[] = [randomUser()]
     const usernameToCall = random.string(32)
     let usernameCalled: string | undefined
     const fakeTwitterApiClient: TwitterClient.GetFriends = {
