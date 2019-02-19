@@ -1,6 +1,8 @@
 import { ReadFileLike, load } from '../../../src/userList/load'
 import { expect } from 'chai'
 import { TwitterClient } from '../../../src/twitterApiClient'
+import { randomUser } from '../dataGeneration'
+import { random } from 'reproducible-random'
 
 const dummyFile = {
   type: 'user-list',
@@ -9,7 +11,7 @@ const dummyFile = {
 
 describe('user list dump', () => {
   it('should reject if readFile fails', () => {
-    const error = new Error('an error')
+    const error = new Error(random.string(32))
     const failingReadFile: ReadFileLike = (file, options, callback) => {
       callback(error)
     }
@@ -17,7 +19,7 @@ describe('user list dump', () => {
   })
 
   it('should passthrough file parameter and specify utf-8', async () => {
-    const givenFile = 'a filename'
+    const givenFile = random.string(32)
 
     let capturedOptions: { encoding: string } | undefined | null
     let capturedFile: string | undefined
@@ -32,7 +34,7 @@ describe('user list dump', () => {
   })
 
   it('should reject if the data was not JSON-parseable', () => {
-    const badData = 'not valid JSON'
+    const badData = random.string(32)
     const readFile: ReadFileLike = (file, options, callback) => {
       callback(undefined, badData)
     }
@@ -59,7 +61,7 @@ describe('user list dump', () => {
   it('should reject if the version was >1', async () => {
     const testCases = [
       { type: 'user-list' },
-      { type: 'user-list', version: '1' },
+      { type: 'user-list', version: random.pick(['1', true, null, {}, []]) },
       { type: 'user-list', version: 2 }
     ]
     for (const testCase of testCases) {
@@ -73,8 +75,10 @@ describe('user list dump', () => {
 
   it('should return the user list', () => {
     const users: TwitterClient.User[] = [
-      { id_str: '123456789', screen_name: 'abcdef', name: 'Lord Abc of Def' },
-      { id_str: '234567891', screen_name: 'bcdefa', name: 'Lord Bcd of Efa' }
+      randomUser(),
+      randomUser(),
+      randomUser(),
+      randomUser()
     ]
     const readFile: ReadFileLike = (file, options, callback) => {
       callback(undefined, JSON.stringify({
