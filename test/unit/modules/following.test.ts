@@ -3,6 +3,7 @@ import { random } from 'reproducible-random'
 import { Following, defaults } from '../../../src/modules/following'
 import { TwitterClient } from '../../../src/twitterApiClient'
 import { randomUser } from '../dataGeneration'
+import { dump } from '../../../src/userList/dump'
 
 const fakeTwitterApiClient = (usersToReturn: TwitterClient.User[]): TwitterClient.GetFriends => ({
   getFriends: () => {
@@ -55,5 +56,24 @@ describe('following', () => {
     const firstLogLineFirstPart = firstLogLine[0]
     if (typeof firstLogLineFirstPart !== 'string') { throw new AssertionError('Log was not a string') }
     expect(JSON.parse(firstLogLineFirstPart) as unknown).to.deep.equal(usersToReturn)
+  })
+
+  it('should dump to file if out file param is passed', async () => {
+    const usersToReturn: TwitterClient.User[] = [randomUser()]
+    const apiClient = fakeTwitterApiClient(usersToReturn)
+    const givenFile = random.string(32)
+
+    let capturedFile: string | undefined
+    let capturedUsers: TwitterClient.User[] | undefined
+    const fakeDump: typeof dump = async (file, users) => {
+      capturedFile = file
+      capturedUsers = users
+    }
+
+    const following = new Following(apiClient, { ...defaults, userListDump: fakeDump })
+    await following.run({ user: randomUser().screen_name, out: givenFile })
+
+    expect(capturedFile).to.equal(givenFile)
+    expect(capturedUsers).to.deep.equal(usersToReturn)
   })
 })

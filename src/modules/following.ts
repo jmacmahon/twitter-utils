@@ -23,9 +23,14 @@ export class Following implements Module {
   async run (rawParams: Dict<unknown>) {
     const extractor = new JsonExtractor(rawParams)
     const params = {
-      ...extractor.stringValue('user')
+      ...extractor.stringValue('user'),
+      ...extractor.optionalStringValue('out')
     }
     const following = await this.client.getFriends(params.user)
-    this.injections.consoleLog(JSON.stringify(following, null, 2))
+    if (params.out) {
+      await this.injections.userListDump(params.out, following)
+    } else {
+      this.injections.consoleLog(JSON.stringify(following, null, 2))
+    }
   }
 }
