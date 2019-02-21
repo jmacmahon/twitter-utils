@@ -1,7 +1,7 @@
-import { TwitterClient } from '../twitterApiClient'
 import fs from 'fs'
 import { Twitter } from 'twit'
 import { isDict } from '../dict'
+import { TwitterClient } from '../twitterApiClient'
 
 export type ReadFileLike = (
   file: string,

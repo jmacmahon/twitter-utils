@@ -1,9 +1,9 @@
-import { expect, AssertionError } from 'chai'
+import { AssertionError, expect } from 'chai'
 import { random } from 'reproducible-random'
-import { Following, defaults } from '../../../src/modules/following'
+import { defaultInjections, Following } from '../../../src/modules/following'
 import { TwitterClient } from '../../../src/twitterApiClient'
-import { randomUser } from '../dataGeneration'
 import { dump } from '../../../src/userList/dump'
+import { randomUser } from '../dataGeneration'
 
 const fakeTwitterApiClient = (usersToReturn: TwitterClient.User[]): TwitterClient.GetFriends => ({
   getFriends: () => {
@@ -11,7 +11,7 @@ const fakeTwitterApiClient = (usersToReturn: TwitterClient.User[]): TwitterClien
   }
 })
 
-describe('following', () => {
+describe('following module', () => {
   it('rejects if the Twitter client rejects', () => {
     const err = new Error(random.string(32))
     const fakeTwitterApiClient: TwitterClient.GetFriends = {
@@ -47,7 +47,7 @@ describe('following', () => {
       logLines.push(messages)
     }
 
-    const following = new Following(apiClient, { ...defaults, consoleLog: fakeConsoleLog })
+    const following = new Following(apiClient, { ...defaultInjections, consoleLog: fakeConsoleLog })
     await following.run({ user: randomUser().screen_name })
 
     expect(logLines.length).to.equal(1)
@@ -70,7 +70,7 @@ describe('following', () => {
       capturedUsers = users
     }
 
-    const following = new Following(apiClient, { ...defaults, userListDump: fakeDump })
+    const following = new Following(apiClient, { ...defaultInjections, userListDump: fakeDump })
     await following.run({ user: randomUser().screen_name, out: givenFile })
 
     expect(capturedFile).to.equal(givenFile)

@@ -4,12 +4,7 @@ import { Module } from '../module'
 import { TwitterClient } from '../twitterApiClient'
 import { dump } from '../userList/dump'
 
-type Injections = {
-  consoleLog: typeof console.log,
-  userListDump: typeof dump
-}
-
-export const defaults: Injections = {
+export const defaultInjections = {
   consoleLog: console.log,
   userListDump: dump
 }
@@ -17,11 +12,11 @@ export const defaults: Injections = {
 export class Following implements Module {
   constructor (
     private client: TwitterClient.GetFriends,
-    private injections = defaults
+    private injections = defaultInjections
  ) { }
 
   async run (rawParams: Dict<unknown>) {
-    const extractor = new JsonExtractor(rawParams)
+    const extractor = new JsonExtractor(rawParams, '')
     const params = {
       ...extractor.stringValue('user'),
       ...extractor.optionalStringValue('out')

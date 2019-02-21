@@ -1,7 +1,7 @@
-import { dump, WriteFileLike } from '../../../src/userList/dump'
 import { expect } from 'chai'
-import { TwitterClient } from '../../../src/twitterApiClient'
 import { random } from 'reproducible-random'
+import { TwitterClient } from '../../../src/twitterApiClient'
+import { dump, WriteFileLike } from '../../../src/userList/dump'
 import { randomUser } from '../dataGeneration'
 
 describe('user list dump', () => {

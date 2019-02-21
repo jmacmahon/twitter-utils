@@ -13,7 +13,7 @@ export class FollowingDiff implements Module {
   }
 
   async run (rawParams: Dict<unknown>) {
-    const extractor = new JsonExtractor(rawParams)
+    const extractor = new JsonExtractor(rawParams, '')
     const params = {
       ...extractor.stringValue('userA'),
       ...extractor.stringValue('userB')

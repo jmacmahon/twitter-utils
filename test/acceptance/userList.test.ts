@@ -1,7 +1,7 @@
-import { dump } from '../../src/userList/dump'
-import { constants, accessSync, unlinkSync } from 'fs'
 import { expect } from 'chai'
+import { accessSync, constants, unlinkSync } from 'fs'
 import { TwitterClient } from '../../src/twitterApiClient'
+import { dump } from '../../src/userList/dump'
 import { load } from '../../src/userList/load'
 import { randomUser } from '../unit/dataGeneration'
 

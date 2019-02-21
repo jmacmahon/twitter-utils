@@ -4,7 +4,7 @@ import { FollowingDiff } from '../../../src/modules/followingDiff'
 import { TwitterClient } from '../../../src/twitterApiClient'
 import { randomUser } from '../dataGeneration'
 
-describe('followingIntersection', () => {
+describe('followingDiff module', () => {
   it('rejects if the Twitter client rejects', () => {
     const err = new Error(random.string(32))
     const fakeTwitterApiClient: TwitterClient.GetFriends = {

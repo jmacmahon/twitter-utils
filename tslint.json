@@ -10,8 +10,7 @@
         ]
     },
     "rules": {
-        // See https://github.com/palantir/tslint/issues/4107
-        "strict-type-predicates": false
+        "ordered-imports": true
     },
     "rulesDirectory": []
 }

@@ -28,6 +28,10 @@ export namespace TwitterClient {
     getFriends: (username?: string) => Promise<User[]>
   }
 
+  export interface Follow {
+    follow: (user: MinimalUser) => Promise<void>
+  }
+
   export type User = {
     id_str: string
     screen_name: string
@@ -37,7 +41,7 @@ export namespace TwitterClient {
   export type MinimalUser = { id_str: string } | { screen_name: string }
 }
 
-export class TwitterClient implements TwitterClient.GetFriends {
+export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Follow {
   constructor (private twit: TwitterClient.TwitLike) { }
 
   public async getFriends (username?: string): Promise<TwitterClient.User[]> {
@@ -82,10 +86,13 @@ export class TwitterClient implements TwitterClient.GetFriends {
 
 function extractUsers (raw: Dict<unknown>): TwitterClient.User[] {
   const extractor = new JsonExtractor(raw)
-  const data = extractor.arrayOfObjects('users', (userExtractor) => ({
-    ...userExtractor.stringValue('id_str'),
-    ...userExtractor.stringValue('screen_name'),
-    ...userExtractor.stringValue('name')
-  }))
+  const data = extractor.arrayOf('users', (rawUser) => {
+    const userExtractor = new JsonExtractor(rawUser)
+    return {
+      ...userExtractor.stringValue('id_str'),
+      ...userExtractor.stringValue('screen_name'),
+      ...userExtractor.stringValue('name')
+    }
+  })
   return data.users
 }

@@ -1,8 +1,8 @@
-import { ReadFileLike, load } from '../../../src/userList/load'
 import { expect } from 'chai'
-import { TwitterClient } from '../../../src/twitterApiClient'
-import { randomUser } from '../dataGeneration'
 import { random } from 'reproducible-random'
+import { TwitterClient } from '../../../src/twitterApiClient'
+import { load, ReadFileLike } from '../../../src/userList/load'
+import { randomUser } from '../dataGeneration'
 
 const dummyFile = {
   type: 'user-list',
