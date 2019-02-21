@@ -3,14 +3,23 @@ import { concat } from 'lodash'
 import { Dict } from './dict'
 
 export namespace TwitterClient {
-  export interface TwitParams {
+  export type GetParams = FriendsListParams
+  export interface FriendsListParams {
     screen_name?: string
     count?: number
     cursor?: string
   }
 
+  export type PostParams = FriendshipsCreateParams
+  export interface FriendshipsCreateParams {
+    screen_name?: string
+    user_id?: string
+    follow?: boolean
+  }
+
   export interface TwitGet {
-    get: (endpoint: string, params?: TwitParams) => Promise<{ data: Dict<unknown> }>,
+    get: (endpoint: string, params?: GetParams) => Promise<{ data: Dict<unknown> }>,
+    post: (endpoint: string, params?: PostParams) => Promise<unknown>
   }
 
   export interface TwitLike extends TwitGet { }
@@ -24,20 +33,31 @@ export namespace TwitterClient {
     screen_name: string
     name: string
   }
+
+  export type MinimalUser = { id_str: string } | { screen_name: string }
 }
 
 export class TwitterClient implements TwitterClient.GetFriends {
   constructor (private twit: TwitterClient.TwitLike) { }
 
   public async getFriends (username?: string): Promise<TwitterClient.User[]> {
-    const params: TwitterClient.TwitParams = { screen_name: username }
+    const params: TwitterClient.FriendsListParams = { screen_name: username }
     const responsePages = await this.paginated('friends/list', params)
     const usersByPage = responsePages.map(extractUsers)
     return concat([], ...usersByPage)
   }
 
-  public async paginated (endpoint: string, params: TwitterClient.TwitParams = {}): Promise<Dict<unknown>[]> {
-    const baseParams: TwitterClient.TwitParams = {
+  public async follow (user: TwitterClient.MinimalUser): Promise<void> {
+    const userParam = 'id_str' in user ? { user_id: user.id_str } : { screen_name: user.screen_name }
+    const params = {
+      ...userParam,
+      follow: true
+    }
+    await this.twit.post('friendships/create', params)
+  }
+
+  public async paginated (endpoint: string, params: TwitterClient.FriendsListParams = {}): Promise<Dict<unknown>[]> {
+    const baseParams: TwitterClient.GetParams = {
       ...params,
       count: 200
     }

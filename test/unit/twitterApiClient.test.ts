@@ -7,11 +7,17 @@ import { randomUser } from './dataGeneration'
 
 const noop = () => undefined
 
+const dummyTwit: TwitterClient.TwitLike = {
+  get: () => Promise.resolve({ data: {} }),
+  post: () => Promise.resolve()
+}
+
 describe('Twitter API client wrapper', () => {
   describe('getFriends', () => {
     it('should reject if Twit rejects', () => {
       const error = new Error(random.string(32))
       const fakeTwit = {
+        ...dummyTwit,
         get: () => Promise.reject(error)
       }
       const twitter = new TwitterClient(fakeTwit)
@@ -21,6 +27,7 @@ describe('Twitter API client wrapper', () => {
     it('should call Twit with friends/list endpoint', async () => {
       let actualEndpoint: string | undefined
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: (endpoint) => {
           actualEndpoint = endpoint
           return Promise.resolve({ data: {} })
@@ -35,6 +42,7 @@ describe('Twitter API client wrapper', () => {
       const expectedUsername = random.string(32)
       let actualParams: unknown
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: (endpoint, params) => {
           actualParams = params
           return Promise.resolve({ data: {} })
@@ -51,7 +59,7 @@ describe('Twitter API client wrapper', () => {
 
     it('should throw if malformed data is received', async () => {
       const buildTwitterClient = (data: Dict<unknown>): TwitterClient => {
-        const fakeTwit = { get: () => Promise.resolve({ data }) }
+        const fakeTwit = { ...dummyTwit, get: () => Promise.resolve({ data }) }
         return new TwitterClient(fakeTwit)
       }
 
@@ -72,10 +80,60 @@ describe('Twitter API client wrapper', () => {
           randomUser()
         ]
       }
-      const fakeTwit = { get: () => Promise.resolve({ data }) }
+      const fakeTwit = { ...dummyTwit, get: () => Promise.resolve({ data }) }
       const client = new TwitterClient(fakeTwit)
       const actualUsers = await client.getFriends()
       expect(actualUsers).to.deep.equal(data.users)
+    })
+  })
+
+  describe('follow', () => {
+    it('should reject if Twit rejects', () => {
+      const error = new Error(random.string(32))
+      const fakeTwit = {
+        ...dummyTwit,
+        post: () => Promise.reject(error)
+      }
+      const twitter = new TwitterClient(fakeTwit)
+      return expect(twitter.follow(randomUser())).to.be.rejectedWith(error)
+    })
+
+    it('should call Twit with friendships/create endpoint', async () => {
+      let actualEndpoint: string | undefined
+      const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
+        post: (endpoint) => {
+          actualEndpoint = endpoint
+          return Promise.resolve()
+        }
+      }
+      const twitter = new TwitterClient(fakeTwit)
+      await twitter.follow(randomUser()).catch(noop)
+      return expect(actualEndpoint).to.equal('friendships/create')
+    })
+
+    it('should pass the screen name or user id as parameters, and pass follow: true', async () => {
+      const user = randomUser()
+      const testCases = [
+        { minimalUser: { screen_name: user.screen_name }, expectedParams: { screen_name: user.screen_name, follow: true } },
+        { minimalUser: { id_str: user.id_str }, expectedParams: { user_id: user.id_str, follow: true } },
+        { minimalUser: { id_str: user.id_str, screen_name: user.screen_name }, expectedParams: { user_id: user.id_str, follow: true } }
+      ]
+      for (const { minimalUser, expectedParams } of testCases) {
+        let actualParams: unknown
+        const fakeTwit: TwitterClient.TwitLike = {
+          ...dummyTwit,
+          post: (endpoint, params) => {
+            actualParams = params
+            return Promise.resolve()
+          }
+        }
+        const twitter = new TwitterClient(fakeTwit)
+
+        await twitter.follow(minimalUser)
+
+        await expect(actualParams).to.deep.include(expectedParams)
+      }
     })
   })
 
@@ -83,6 +141,7 @@ describe('Twitter API client wrapper', () => {
     it('should reject if Twit rejects', () => {
       const err = new Error(random.string(32))
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: () => Promise.reject(err)
       }
       const client = new TwitterClient(fakeTwit)
@@ -98,6 +157,7 @@ describe('Twitter API client wrapper', () => {
       let actualEndpoint: unknown
       let actualParams: unknown
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: async (endpoint, params = {}) => {
           actualEndpoint = endpoint
           actualParams = params
@@ -115,6 +175,7 @@ describe('Twitter API client wrapper', () => {
     it('should request a page size of 200', async () => {
       let actualParams: unknown
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: async (endpoint, params = {}) => {
           actualParams = params
           return { data: {} }
@@ -132,6 +193,7 @@ describe('Twitter API client wrapper', () => {
     it('should set cursor = -1 initially', async () => {
       let actualParams: unknown
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: async (endpoint, params = {}) => {
           actualParams = params
           return { data: {} }
@@ -151,6 +213,7 @@ describe('Twitter API client wrapper', () => {
       let capturedCursor: unknown
       let callCount = 0
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: async (endpoint, params = {}) => {
           callCount += 1
           switch (callCount) {
@@ -187,6 +250,7 @@ describe('Twitter API client wrapper', () => {
       }
       let callCount = 0
       const fakeTwit: TwitterClient.TwitLike = {
+        ...dummyTwit,
         get: async () => {
           callCount += 1
           switch (callCount) {
