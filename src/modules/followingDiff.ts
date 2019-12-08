@@ -1,7 +1,16 @@
-import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
+import { Primitive, validate } from 'validate-typescript'
 import { Dict, dictValues } from '../dict'
 import { Module } from '../module'
 import { TwitterClient } from '../twitterApiClient'
+
+type Params = {
+  userA: string
+  userB: string
+}
+const Params = (): Params => ({
+  userA: Primitive(String),
+  userB: Primitive(String)
+})
 
 export class FollowingDiff implements Module {
   constructor (private client: TwitterClient.GetFriends) { }
@@ -13,11 +22,7 @@ export class FollowingDiff implements Module {
   }
 
   async run (rawParams: Dict<unknown>) {
-    const extractor = new JsonExtractor(rawParams, '')
-    const params = {
-      ...extractor.stringValue('userA'),
-      ...extractor.stringValue('userB')
-    }
+    const params = validate(Params(), rawParams)
     const intersection = await this.getIntersection(params.userA, params.userB)
     console.log(JSON.stringify(intersection, null, 2))
   }

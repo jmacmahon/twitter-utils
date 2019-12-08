@@ -1,8 +1,17 @@
-import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
+import { Optional, Primitive, validate } from 'validate-typescript'
 import { Dict } from '../dict'
 import { Module } from '../module'
 import { TwitterClient } from '../twitterApiClient'
 import { dump } from '../userList/dump'
+
+type Params = {
+  user: string
+  out?: string
+}
+const Params = (): Params => ({
+  user: Primitive(String),
+  out: Optional(Primitive(String))
+})
 
 export const defaultInjections = {
   consoleLog: console.log,
@@ -16,11 +25,7 @@ export class Following implements Module {
  ) { }
 
   async run (rawParams: Dict<unknown>) {
-    const extractor = new JsonExtractor(rawParams, '')
-    const params = {
-      ...extractor.stringValue('user'),
-      ...extractor.optionalStringValue('out')
-    }
+    const params = validate(Params(), rawParams)
     const following = await this.client.getFriends(params.user)
     if (params.out) {
       await this.injections.userListDump(params.out, following)

@@ -1,47 +1,7 @@
-import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
-import { isDict } from '@evergreen-smart-power/validation-tools/build/src/dict'
 import { concat } from 'lodash'
 import Twit = require('twit')
-import { Dict } from './dict'
-
-export namespace TwitterClient {
-  export type GetParams = FriendsListParams
-  export interface FriendsListParams {
-    screen_name?: string
-    count?: number
-    cursor?: string
-  }
-
-  export type PostParams = FriendshipsCreateParams
-  export interface FriendshipsCreateParams {
-    screen_name?: string
-    user_id?: string
-    follow?: boolean
-  }
-
-  export interface TwitGet {
-    get: (endpoint: string, params?: Twit.Params) => Promise<{ data: object }>,
-    post: (endpoint: string, params?: Twit.Params) => Promise<unknown>
-  }
-
-  export interface TwitLike extends TwitGet { }
-
-  export interface GetFriends {
-    getFriends: (username?: string) => Promise<User[]>
-  }
-
-  export interface Follow {
-    follow: (user: MinimalUser) => Promise<void>
-  }
-
-  export type User = {
-    id_str: string
-    screen_name: string
-    name: string
-  }
-
-  export type MinimalUser = { id_str: string } | { screen_name: string }
-}
+import { Primitive, validate } from 'validate-typescript'
+import { Dict, isDict } from './dict'
 
 export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Follow {
   constructor (private twit: TwitterClient.TwitLike) { }
@@ -49,7 +9,7 @@ export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Fo
   public async getFriends (username?: string): Promise<TwitterClient.User[]> {
     const params: TwitterClient.FriendsListParams = { screen_name: username }
     const responsePages = await this.paginated('friends/list', params)
-    const usersByPage = responsePages.map(extractUsers)
+    const usersByPage = responsePages.map(page => validate([TwitterClient.User()], page.users))
     return concat([], ...usersByPage)
   }
 
@@ -90,15 +50,46 @@ export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Fo
   }
 }
 
-function extractUsers (raw: Dict<unknown>): TwitterClient.User[] {
-  const extractor = new JsonExtractor(raw)
-  const data = extractor.arrayOf('users', (rawUser) => {
-    const userExtractor = new JsonExtractor(rawUser)
-    return {
-      ...userExtractor.stringValue('id_str'),
-      ...userExtractor.stringValue('screen_name'),
-      ...userExtractor.stringValue('name')
-    }
+export namespace TwitterClient {
+  export type GetParams = FriendsListParams
+  export interface FriendsListParams {
+    screen_name?: string
+    count?: number
+    cursor?: string
+  }
+
+  export type PostParams = FriendshipsCreateParams
+  export interface FriendshipsCreateParams {
+    screen_name?: string
+    user_id?: string
+    follow?: boolean
+  }
+
+  export interface TwitGet {
+    get: (endpoint: string, params?: Twit.Params) => Promise<{ data: object }>,
+    post: (endpoint: string, params?: Twit.Params) => Promise<unknown>
+  }
+
+  export interface TwitLike extends TwitGet { }
+
+  export interface GetFriends {
+    getFriends: (username?: string) => Promise<User[]>
+  }
+
+  export interface Follow {
+    follow: (user: MinimalUser) => Promise<void>
+  }
+
+  export type User = {
+    id_str: string
+    screen_name: string
+    name: string
+  }
+  export const User = (): User => ({
+    id_str: Primitive(String),
+    screen_name: Primitive(String),
+    name: Primitive(String)
   })
-  return data.users
+
+  export type MinimalUser = { id_str: string } | { screen_name: string }
 }

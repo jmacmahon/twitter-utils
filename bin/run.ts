@@ -1,6 +1,6 @@
-import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
 import { config } from 'dotenv'
 import Twit from 'twit'
+import { Primitive, validate } from 'validate-typescript'
 import { CommandParsing } from '../src/commandParsing'
 import { Dict } from '../src/dict'
 import { Module } from '../src/module'
@@ -10,14 +10,21 @@ import { TwitterClient } from '../src/twitterApiClient'
 
 config()
 
+type Env = {
+  CONSUMER_KEY: string
+  CONSUMER_SECRET: string
+  ACCESS_TOKEN?: string
+  ACCESS_TOKEN_SECRET?: string
+}
+const Env = (): Env => ({
+  CONSUMER_KEY: Primitive(String),
+  CONSUMER_SECRET: Primitive(String),
+  ACCESS_TOKEN: Primitive(String),
+  ACCESS_TOKEN_SECRET: Primitive(String)
+})
+
 async function main () {
-  const envExtractor = new JsonExtractor(process.env)
-  const env = {
-    ...envExtractor.stringValue('CONSUMER_KEY'),
-    ...envExtractor.stringValue('CONSUMER_SECRET'),
-    ...envExtractor.optionalStringValue('ACCESS_TOKEN'),
-    ...envExtractor.optionalStringValue('ACCESS_TOKEN_SECRET')
-  }
+  const env = validate(Env(), process.env)
   const twit = new Twit({
     consumer_key: env.CONSUMER_KEY,
     consumer_secret: env.CONSUMER_SECRET,
