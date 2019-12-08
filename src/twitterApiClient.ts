@@ -1,5 +1,7 @@
 import { JsonExtractor } from '@evergreen-smart-power/validation-tools'
+import { isDict } from '@evergreen-smart-power/validation-tools/build/src/dict'
 import { concat } from 'lodash'
+import Twit = require('twit')
 import { Dict } from './dict'
 
 export namespace TwitterClient {
@@ -18,8 +20,8 @@ export namespace TwitterClient {
   }
 
   export interface TwitGet {
-    get: (endpoint: string, params?: GetParams) => Promise<{ data: Dict<unknown> }>,
-    post: (endpoint: string, params?: PostParams) => Promise<unknown>
+    get: (endpoint: string, params?: Twit.Params) => Promise<{ data: object }>,
+    post: (endpoint: string, params?: Twit.Params) => Promise<unknown>
   }
 
   export interface TwitLike extends TwitGet { }
@@ -73,12 +75,16 @@ export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Fo
         cursor
       }
       const response = await this.twit.get(endpoint, params)
-      allData.push(response.data)
+      const { data } = response
+      if (!isDict(data)) {
+        throw new Error(`Response data was not a dict: ${data}`)
+      }
+      allData.push(data)
 
-      if (typeof response.data.next_cursor_str !== 'string' || response.data.next_cursor_str === '0') {
+      if (typeof data.next_cursor_str !== 'string' || data.next_cursor_str === '0') {
         break
       }
-      cursor = response.data.next_cursor_str
+      cursor = data.next_cursor_str
     }
     return allData
   }
