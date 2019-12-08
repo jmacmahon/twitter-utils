@@ -3,7 +3,7 @@ import Twit = require('twit')
 import { Primitive, validate } from 'validate-typescript'
 import { Dict, isDict } from './dict'
 
-export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Follow {
+export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Follow, TwitterClient.DisableRetweets {
   constructor (private twit: TwitterClient.TwitLike) { }
 
   public async getFriends (username?: string): Promise<TwitterClient.User[]> {
@@ -20,6 +20,15 @@ export class TwitterClient implements TwitterClient.GetFriends, TwitterClient.Fo
       follow: true
     }
     await this.twit.post('friendships/create', params)
+  }
+
+  public async disableRetweets (user: TwitterClient.MinimalUser): Promise<void> {
+    const userParam = 'id_str' in user ? { user_id: user.id_str } : { screen_name: user.screen_name }
+    const params = {
+      ...userParam,
+      retweets: false
+    }
+    await this.twit.post('friendships/update', params)
   }
 
   public async paginated (endpoint: string, params: TwitterClient.FriendsListParams = {}): Promise<Dict<unknown>[]> {
@@ -78,6 +87,10 @@ export namespace TwitterClient {
 
   export interface Follow {
     follow: (user: MinimalUser) => Promise<void>
+  }
+
+  export interface DisableRetweets {
+    disableRetweets: (user: MinimalUser) => Promise<void>
   }
 
   export type User = {

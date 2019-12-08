@@ -6,6 +6,7 @@ import { Dict } from '../src/dict'
 import { Module } from '../src/module'
 import { Following } from '../src/modules/following'
 import { FollowingDiff } from '../src/modules/followingDiff'
+import { MuteRetweets } from '../src/modules/muteRetweets'
 import { TwitterClient } from '../src/twitterApiClient'
 
 config()
@@ -34,7 +35,8 @@ async function main () {
   const client = new TwitterClient(twit)
   const modules: Dict<Module> = {
     'following-diff': new FollowingDiff(client),
-    'following': new Following(client)
+    'following': new Following(client),
+    'mute-retweets': new MuteRetweets(client)
   }
 
   const fullCommand = CommandParsing.parseCommand(process.argv)
